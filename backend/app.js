@@ -15,7 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 // Add a health check endpoint
-app.get('/health', (req, res) => {
+app.get('/', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
