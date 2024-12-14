@@ -33,24 +33,24 @@ const ListInfluencers: React.FC = () => {
           nameFilter,
           managerFilter
         },
-        timeout: 10000 // 10 second timeout
+        timeout: 10000
       });
-      setInfluencers(response.data);
+      setInfluencers(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching influencers:', error);
-      setInfluencers([]); // Set empty array on error
+      setInfluencers([]);
     }
   }, [nameFilter, managerFilter]);
 
   const fetchEmployees = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/influencers/employees`, {
-        timeout: 10000 // 10 second timeout
+        timeout: 10000
       });
-      setEmployees(response.data);
+      setEmployees(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching employees:', error);
-      setEmployees([]); // Set empty array on error
+      setEmployees([]);
     }
   };
 
@@ -101,17 +101,19 @@ const ListInfluencers: React.FC = () => {
       </div>
       
       <div className="influencers-list">
-        {influencers.length > 0 ? (
+        {Array.isArray(influencers) && influencers.length > 0 ? (
           influencers.map((influencer) => (
             <div key={influencer._id} className="influencer-card">
               <h3>{influencer.firstName} {influencer.lastName}</h3>
               <div className="social-accounts">
                 <strong>Social Media:</strong>
-                {influencer.socialMediaAccounts.map((acc, idx) => (
-                  <span key={idx} className="social-account">
-                    {acc.platform}: {acc.username}
-                  </span>
-                ))}
+                {Array.isArray(influencer.socialMediaAccounts) && 
+                  influencer.socialMediaAccounts.map((acc, idx) => (
+                    <span key={idx} className="social-account">
+                      {acc.platform}: {acc.username}
+                    </span>
+                  ))
+                }
               </div>
               <div className="manager-section">
                 <strong>Manager:</strong>
@@ -121,9 +123,9 @@ const ListInfluencers: React.FC = () => {
                   className="manager-select"
                 >
                   <option value="">No Manager</option>
-                  {employees.map((emp) => (
-                    <option key={emp._id} value={emp._id}>
-                      {emp.name}
+                  {Array.isArray(employees) && employees.map((employee) => (
+                    <option key={employee._id} value={employee._id}>
+                      {employee.name}
                     </option>
                   ))}
                 </select>
@@ -131,9 +133,7 @@ const ListInfluencers: React.FC = () => {
             </div>
           ))
         ) : (
-          <div className="no-results">
-            No influencers found matching your search criteria
-          </div>
+          <div className="no-results">No influencers found</div>
         )}
       </div>
     </div>
