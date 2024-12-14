@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import '../styles/ListInfluencers.css';
 
+const BASE_URL = 'https://backend-omega-wine.vercel.app';
+
 interface SocialMediaAccount {
   username: string;
   platform: 'Instagram' | 'TikTok';
@@ -26,51 +28,65 @@ const ListInfluencers: React.FC = () => {
   const [nameFilter, setNameFilter] = useState('');
   const [managerFilter, setManagerFilter] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const fetchInfluencers = useCallback(async () => {
     try {
+      setLoading(true);
+      setError('');
       console.log('Fetching influencers...');
-      const response = await axios.get(`https://backend-omega-wine.vercel.app/api/influencers`, {
+      const response = await axios.get(`${BASE_URL}/api/influencers`, {
         params: {
           nameFilter,
           managerFilter
         },
-        timeout: 10000
+        timeout: 30000 // Increase timeout to 30 seconds
       });
       console.log('Influencers response:', response.data);
-      setInfluencers(Array.isArray(response.data) ? response.data : []);
-      setError('');
-    } catch (error: any) {
-      console.error('Error fetching influencers:', error.response?.data || error.message);
-      setInfluencers([]);
-      setError('Failed to fetch influencers');
+      if (Array.isArray(response.data)) {
+        setInfluencers(response.data);
+      } else {
+        console.error('Invalid response format:', response.data);
+        setError('Invalid data format received from server');
+      }
+    } catch (err: any) {
+      console.error('Error fetching influencers:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to fetch influencers');
+    } finally {
+      setLoading(false);
     }
   }, [nameFilter, managerFilter]);
 
   const fetchEmployees = async () => {
     try {
       console.log('Fetching employees...');
-      const response = await axios.get(`https://backend-omega-wine.vercel.app/api/influencers/employees`, {
-        timeout: 10000
+      const response = await axios.get(`${BASE_URL}/api/influencers/employees`, {
+        timeout: 30000 // Increase timeout to 30 seconds
       });
       console.log('Employees response:', response.data);
-      setEmployees(Array.isArray(response.data) ? response.data : []);
-    } catch (error: any) {
-      console.error('Error fetching employees:', error.response?.data || error.message);
-      setEmployees([]);
+      if (Array.isArray(response.data)) {
+        setEmployees(response.data);
+      }
+    } catch (err: any) {
+      console.error('Error fetching employees:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to fetch employees');
     }
   };
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      const response = await axios.patch(`https://backend-omega-wine.vercel.app/api/influencers/${influencerId}/manager`, {
+      setError('');
+      const response = await axios.patch(`${BASE_URL}/api/influencers/${influencerId}/manager`, {
         managerId
+      }, {
+        timeout: 30000 // Increase timeout to 30 seconds
       });
       setInfluencers(influencers.map(inf => 
-        inf._id === influencerId ? response.data : inf
+        inf._id === influencerId ? { ...inf, manager: response.data.manager } : inf
       ));
-    } catch (error: any) {
-      console.error('Error updating manager:', error.response?.data || error.message);
+    } catch (err: any) {
+      console.error('Error updating manager:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to update manager');
     }
   };
 
@@ -109,42 +125,46 @@ const ListInfluencers: React.FC = () => {
       
       {error && <div className="error-message">{error}</div>}
       
-      <div className="influencers-list">
-        {Array.isArray(influencers) && influencers.length > 0 ? (
-          influencers.map((influencer) => (
-            <div key={influencer._id} className="influencer-card">
-              <h3>{influencer.firstName} {influencer.lastName}</h3>
-              <div className="social-accounts">
-                <strong>Social Media:</strong>
-                {Array.isArray(influencer.socialMediaAccounts) && 
-                  influencer.socialMediaAccounts.map((acc, idx) => (
-                    <span key={idx} className="social-account">
-                      {acc.platform}: {acc.username}
-                    </span>
-                  ))
-                }
+      {loading ? (
+        <div className="loading-message">Loading...</div>
+      ) : (
+        <div className="influencers-list">
+          {Array.isArray(influencers) && influencers.length > 0 ? (
+            influencers.map((influencer) => (
+              <div key={influencer._id} className="influencer-card">
+                <h3>{influencer.firstName} {influencer.lastName}</h3>
+                <div className="social-accounts">
+                  <strong>Social Media:</strong>
+                  {Array.isArray(influencer.socialMediaAccounts) && 
+                    influencer.socialMediaAccounts.map((acc, idx) => (
+                      <span key={idx} className="social-account">
+                        {acc.platform}: {acc.username}
+                      </span>
+                    ))
+                  }
+                </div>
+                <div className="manager-section">
+                  <strong>Manager:</strong>
+                  <select
+                    value={influencer.manager?._id || ''}
+                    onChange={(e) => handleManagerChange(influencer._id, e.target.value || null)}
+                    className="manager-select"
+                  >
+                    <option value="">No Manager</option>
+                    {Array.isArray(employees) && employees.map((employee) => (
+                      <option key={employee._id} value={employee._id}>
+                        {employee.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className="manager-section">
-                <strong>Manager:</strong>
-                <select
-                  value={influencer.manager?._id || ''}
-                  onChange={(e) => handleManagerChange(influencer._id, e.target.value || null)}
-                  className="manager-select"
-                >
-                  <option value="">No Manager</option>
-                  {Array.isArray(employees) && employees.map((employee) => (
-                    <option key={employee._id} value={employee._id}>
-                      {employee.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="no-results">No influencers found</div>
-        )}
-      </div>
+            ))
+          ) : (
+            <div className="no-results">No influencers found</div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
