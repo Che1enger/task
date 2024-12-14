@@ -7,14 +7,8 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // CORS configuration
-const corsOptions = {
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Accept', 'Origin', 'X-Requested-With'],
-  credentials: true
-};
+app.use(cors());
 
-app.use(cors(corsOptions));
 app.use(express.json());
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -36,7 +30,7 @@ app.use((err, req, res, next) => {
 });
 
 // Handle options requests
-app.options('*', cors(corsOptions));
+app.options('*', cors());
 
 // Only start the server if not running on Vercel
 if (process.env.NODE_ENV !== 'production') {

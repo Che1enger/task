@@ -44,22 +44,32 @@ const ListInfluencers: React.FC = () => {
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
+      console.log('Making request to:', `${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`);
+      
       const response = await axios({
         method: 'PATCH',
         url: `${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`,
         data: { managerId },
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        withCredentials: false
+          'Accept': 'application/json',
+          'Origin': window.location.origin
+        }
       });
       
-      setInfluencers(influencers.map(inf => 
-        inf._id === influencerId ? response.data : inf
-      ));
+      console.log('Response:', response);
+      
+      if (response.data) {
+        setInfluencers(influencers.map(inf => 
+          inf._id === influencerId ? response.data : inf
+        ));
+      }
     } catch (error) {
       console.error('Error updating manager:', error);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+        console.error('Error status:', error.response.status);
+      }
     }
   };
 
