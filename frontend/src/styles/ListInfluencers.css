@@ -2,76 +2,63 @@
   padding: 20px;
 }
 
-.filter-section {
+.filters {
   margin-bottom: 20px;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  column-gap: 20px;
-  row-gap: 20px;
-}
-
-.filter-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.filter-label {
-  font-weight: bold;
-  font-size: 14px;
-  color: #666;
-}
-
-.filter-input {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.influencers-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
 }
 
-.influencer-card {
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.social-accounts {
-  margin: 10px 0;
+.filter-group input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.manager-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .social-account {
   display: inline-block;
-  margin: 0 10px 5px 0;
+  margin-right: 10px;
   padding: 4px 8px;
   background-color: #f0f0f0;
   border-radius: 4px;
   font-size: 0.9em;
 }
 
-.manager-section {
-  margin-top: 10px;
-}
-
-.manager-select {
-  margin-left: 10px;
-  padding: 4px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-}
-
 .no-results {
   text-align: center;
   color: #666;
-  margin-top: 20px;
-  grid-column: 1 / -1;
+  padding: 20px;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
 }

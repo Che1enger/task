@@ -9,13 +9,11 @@ const port = process.env.PORT || 5000;
 // CORS configuration
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://frontend-five-theta-46.vercel.app', 'https://frontend-sooty-three-56.vercel.app'] 
+    ? ['https://frontend-five-theta-46.vercel.app'] 
     : ['http://localhost:3000'],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Accept', 'Origin', 'X-Requested-With'],
-  credentials: true,
-  preflightContinue: true,
-  optionsSuccessStatus: 204
+  credentials: true
 };
 
 app.use(cors(corsOptions));

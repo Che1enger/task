@@ -44,24 +44,42 @@ const ListInfluencers: React.FC = () => {
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      const response = await axios({
-        method: 'PATCH',
-        url: `${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`,
-        data: { managerId },
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
+      const response = await axios.patch(`${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`, {
+        managerId
       });
-      
-      if (response.data) {
-        setInfluencers(influencers.map(inf => 
-          inf._id === influencerId ? response.data : inf
-        ));
-      }
+      setInfluencers(influencers.map(inf => 
+        inf._id === influencerId ? response.data : inf
+      ));
     } catch (error) {
       console.error('Error updating manager:', error);
     }
+  };
+
+  const renderManagerColumn = (influencer: Influencer) => {
+    if (process.env.NODE_ENV === 'production') {
+      return (
+        <td>
+          {influencer.manager ? influencer.manager.name : 'No manager'}
+        </td>
+      );
+    }
+
+    return (
+      <td>
+        <select
+          value={influencer.manager?._id || ''}
+          onChange={(e) => handleManagerChange(influencer._id, e.target.value || null)}
+          className="manager-select"
+        >
+          <option value="">No manager</option>
+          {employees.map((employee) => (
+            <option key={employee._id} value={employee._id}>
+              {employee.name}
+            </option>
+          ))}
+        </select>
+      </td>
+    );
   };
 
   useEffect(() => {
@@ -97,42 +115,41 @@ const ListInfluencers: React.FC = () => {
         </div>
       </div>
       
-      <div className="influencers-list">
-        {influencers.length > 0 ? (
-          influencers.map((influencer) => (
-            <div key={influencer._id} className="influencer-card">
-              <h3>{influencer.firstName} {influencer.lastName}</h3>
-              <div className="social-accounts">
-                <strong>Social Media:</strong>
-                {influencer.socialMediaAccounts.map((acc, idx) => (
-                  <span key={idx} className="social-account">
-                    {acc.platform}: {acc.username}
-                  </span>
-                ))}
-              </div>
-              <div className="manager-section">
-                <strong>Manager:</strong>
-                <select
-                  value={influencer.manager?._id || ''}
-                  onChange={(e) => handleManagerChange(influencer._id, e.target.value || null)}
-                  className="manager-select"
-                >
-                  <option value="">No Manager</option>
-                  {employees.map((emp) => (
-                    <option key={emp._id} value={emp._id}>
-                      {emp.name}
-                    </option>
+      <table>
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Manager</th>
+            <th>Social Media</th>
+          </tr>
+        </thead>
+        <tbody>
+          {influencers.length > 0 ? (
+            influencers.map((influencer) => (
+              <tr key={influencer._id}>
+                <td>{influencer.firstName}</td>
+                <td>{influencer.lastName}</td>
+                {renderManagerColumn(influencer)}
+                <td>
+                  <strong>Social Media:</strong>
+                  {influencer.socialMediaAccounts.map((acc, idx) => (
+                    <span key={idx} className="social-account">
+                      {acc.platform}: {acc.username}
+                    </span>
                   ))}
-                </select>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="no-results">
-            No influencers found matching your search criteria
-          </div>
-        )}
-      </div>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={4} className="no-results">
+                No influencers found matching your search criteria
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };
