@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 const socialMediaAccountSchema = new mongoose.Schema({
-  username: { type: String, required: true },
+  username: { type: String, required: true, unique: true },
   platform: { type: String, enum: ['Instagram', 'TikTok'], required: true }
 });
 
@@ -17,7 +17,7 @@ const employeeSchema = new mongoose.Schema({
   name: { type: String, required: true }
 });
 
-const Influencer = mongoose.models.Influencer || mongoose.model('Influencer', influencerSchema);
-const Employee = mongoose.models.Employee || mongoose.model('Employee', employeeSchema);
+const Influencer = mongoose.model('Influencer', influencerSchema);
+const Employee = mongoose.model('Employee', employeeSchema);
 
 module.exports = { Influencer, Employee };
