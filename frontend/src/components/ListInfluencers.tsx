@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/ListInfluencers.css';
-import { ENDPOINTS } from '../config.ts';
+
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 interface SocialMediaAccount {
   username: string;
@@ -28,7 +29,7 @@ const ListInfluencers: React.FC = () => {
   const [managerFilter, setManagerFilter] = useState('');
 
   const fetchInfluencers = async () => {
-    const response = await axios.get(ENDPOINTS.INFLUENCERS, {
+    const response = await axios.get(`${API_BASE_URL}/api/influencers`, {
       params: {
         nameFilter,
         managerFilter
@@ -38,22 +39,22 @@ const ListInfluencers: React.FC = () => {
   };
 
   const fetchEmployees = async () => {
-    const response = await axios.get(ENDPOINTS.EMPLOYEES);
+    const response = await axios.get(`${API_BASE_URL}/api/influencers/employees`);
     setEmployees(response.data);
   };
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      console.log('Making request to:', `${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`);
+      const url = `${API_BASE_URL}/api/influencers/${influencerId}/manager`;
+      console.log('Making request to:', url);
       
       const response = await axios({
         method: 'PATCH',
-        url: `${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`,
+        url,
         data: { managerId },
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Origin': window.location.origin
+          'Accept': 'application/json'
         }
       });
       
@@ -74,12 +75,27 @@ const ListInfluencers: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchInfluencers();
-  }, [nameFilter, managerFilter]);
+    const fetchData = async () => {
+      try {
+        const [influencersRes, employeesRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/api/influencers`, {
+            params: {
+              nameFilter,
+              managerFilter
+            }
+          }),
+          axios.get(`${API_BASE_URL}/api/influencers/employees`)
+        ]);
+        
+        setInfluencers(influencersRes.data);
+        setEmployees(employeesRes.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
+    fetchData();
+  }, [nameFilter, managerFilter]);
 
   return (
     <div className="list-influencers">
