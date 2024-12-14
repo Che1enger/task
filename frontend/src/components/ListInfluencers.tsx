@@ -93,8 +93,9 @@ const ListInfluencers: React.FC = () => {
 
   return (
     <div className="list-influencers">
-      <div className="filters">
+      <div className="filter-section">
         <div className="filter-group">
+          <label className="filter-label">Filter by Name:</label>
           <input
             type="text"
             placeholder="Search by first or last name..."
@@ -104,6 +105,7 @@ const ListInfluencers: React.FC = () => {
           />
         </div>
         <div className="filter-group">
+          <label className="filter-label">Filter by Manager:</label>
           <input
             type="text"
             placeholder="Search by manager name or type 'none'..."

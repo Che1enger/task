@@ -2,23 +2,33 @@
   padding: 20px;
 }
 
-.filters {
+.filter-section {
   margin-bottom: 20px;
   display: flex;
-  gap: 20px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 20px;
+  row-gap: 20px;
 }
 
 .filter-group {
+  flex: 1;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filter-label {
+  font-weight: bold;
+  font-size: 14px;
+  color: #666;
 }
 
 .filter-input {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  min-width: 250px;
+  font-size: 14px;
 }
 
 .influencers-list {
