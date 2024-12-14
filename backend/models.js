@@ -7,39 +7,17 @@ const socialMediaAccountSchema = new mongoose.Schema({
 });
 
 const influencerSchema = new mongoose.Schema({
-  firstName: { 
-    type: String, 
-    required: true, 
-    maxlength: 50,
-    index: true 
-  },
-  lastName: { 
-    type: String, 
-    required: true, 
-    maxlength: 50,
-    index: true 
-  },
+  firstName: { type: String, required: true, maxlength: 50 },
+  lastName: { type: String, required: true, maxlength: 50 },
   socialMediaAccounts: [socialMediaAccountSchema],
-  manager: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Employee',
-    index: true 
-  }
+  manager: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' }
 });
 
 const employeeSchema = new mongoose.Schema({
-  name: { 
-    type: String, 
-    required: true,
-    index: true 
-  }
+  name: { type: String, required: true }
 });
 
-// Create compound indexes for better search performance
-influencerSchema.index({ firstName: 1, lastName: 1 });
-influencerSchema.index({ manager: 1, firstName: 1, lastName: 1 });
-
-const Influencer = mongoose.model('Influencer', influencerSchema);
-const Employee = mongoose.model('Employee', employeeSchema);
+const Influencer = mongoose.models.Influencer || mongoose.model('Influencer', influencerSchema);
+const Employee = mongoose.models.Employee || mongoose.model('Employee', employeeSchema);
 
 module.exports = { Influencer, Employee };
