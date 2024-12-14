@@ -32,7 +32,7 @@ const ListInfluencers: React.FC = () => {
   const fetchInfluencers = useCallback(async () => {
     try {
       console.log('Fetching influencers...');
-      const response = await axios.get(`${BACKEND_URL}/api/influencers`, {
+      const response = await axios.get(`https://backend-omega-wine.vercel.app/api/influencers`, {
         params: {
           nameFilter,
           managerFilter
@@ -52,7 +52,7 @@ const ListInfluencers: React.FC = () => {
   const fetchEmployees = async () => {
     try {
       console.log('Fetching employees...');
-      const response = await axios.get(`${BACKEND_URL}/api/influencers/employees`, {
+      const response = await axios.get(`https://backend-omega-wine.vercel.app/api/influencers/employees`, {
         timeout: 10000
       });
       console.log('Employees response:', response.data);
@@ -65,7 +65,7 @@ const ListInfluencers: React.FC = () => {
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      const response = await axios.patch(`${BACKEND_URL}/api/influencers/${influencerId}/manager`, {
+      const response = await axios.patch(`https://backend-omega-wine.vercel.app/api/influencers/${influencerId}/manager`, {
         managerId
       });
       setInfluencers(influencers.map(inf => 

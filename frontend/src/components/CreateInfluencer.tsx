@@ -29,7 +29,7 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
       const uniqueAccounts = Array.from(new Set(socialMediaAccounts.map(acc => acc.username)))
         .map(username => socialMediaAccounts.find(acc => acc.username === username));
       
-      const response = await axios.post(`${BACKEND_URL}/api/influencers`, { 
+      const response = await axios.post(`https://backend-omega-wine.vercel.app/api/influencers`, { 
         firstName, 
         lastName, 
         socialMediaAccounts: uniqueAccounts 
