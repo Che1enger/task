@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import '../styles/ListInfluencers.css';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://backend-omega-opal-70.vercel.app';
 
 interface SocialMediaAccount {
   username: string;
@@ -28,25 +29,18 @@ const ListInfluencers: React.FC = () => {
   const [managerFilter, setManagerFilter] = useState('');
 
   const fetchInfluencers = async () => {
-    const response = await fetch(`${API_BASE_URL}/api/influencers?nameFilter=${nameFilter}&managerFilter=${managerFilter}`);
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    const data = await response.json();
-    setInfluencers(data);
+    const response = await axios.get(`${API_BASE_URL}/api/influencers`, {
+      params: {
+        nameFilter,
+        managerFilter
+      }
+    });
+    setInfluencers(response.data);
   };
 
   const fetchEmployees = async () => {
-    const response = await fetch(`${API_BASE_URL}/api/influencers/employees`);
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    const data = await response.json();
-    setEmployees(data);
+    const response = await axios.get(`${API_BASE_URL}/api/influencers/employees`);
+    setEmployees(response.data);
   };
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
@@ -54,29 +48,29 @@ const ListInfluencers: React.FC = () => {
       const url = `${API_BASE_URL}/api/influencers/${influencerId}/manager`;
       console.log('Making request to:', url);
       
-      const response = await fetch(url, {
+      const response = await axios({
         method: 'PATCH',
+        url,
+        data: { managerId },
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
-        },
-        body: JSON.stringify({ managerId })
+        }
       });
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      console.log('Response:', response);
       
-      const data = await response.json();
-      console.log('Response:', data);
-      
-      if (data) {
+      if (response.data) {
         setInfluencers(influencers.map(inf => 
-          inf._id === influencerId ? data : inf
+          inf._id === influencerId ? response.data : inf
         ));
       }
     } catch (error) {
       console.error('Error updating manager:', error);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+        console.error('Error status:', error.response.status);
+      }
     }
   };
 
@@ -84,21 +78,17 @@ const ListInfluencers: React.FC = () => {
     const fetchData = async () => {
       try {
         const [influencersRes, employeesRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/influencers?nameFilter=${nameFilter}&managerFilter=${managerFilter}`),
-          fetch(`${API_BASE_URL}/api/influencers/employees`)
+          axios.get(`${API_BASE_URL}/api/influencers`, {
+            params: {
+              nameFilter,
+              managerFilter
+            }
+          }),
+          axios.get(`${API_BASE_URL}/api/influencers/employees`)
         ]);
-
-        if (!influencersRes.ok || !employeesRes.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const [influencersData, employeesData] = await Promise.all([
-          influencersRes.json(),
-          employeesRes.json()
-        ]);
-
-        setInfluencers(influencersData);
-        setEmployees(employeesData);
+        
+        setInfluencers(influencersRes.data);
+        setEmployees(employeesRes.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
