@@ -9,11 +9,10 @@ const port = process.env.PORT || 5000;
 // CORS configuration
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://frontend-five-theta-46.vercel.app', 'https://influencer-management-frontend.vercel.app']
+    ? ['https://frontend-five-theta-46.vercel.app'] 
     : ['http://localhost:3000'],
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Accept', 'Origin', 'X-Requested-With'],
-  credentials: true
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type']
 };
 
 app.use(cors(corsOptions));

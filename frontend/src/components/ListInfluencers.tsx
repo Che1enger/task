@@ -44,21 +44,14 @@ const ListInfluencers: React.FC = () => {
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      console.log('Updating manager:', { influencerId, managerId });
       const response = await axios.patch(`${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`, {
         managerId
       });
-      console.log('Update response:', response.data);
       setInfluencers(influencers.map(inf => 
         inf._id === influencerId ? response.data : inf
       ));
-    } catch (error: any) {
-      console.error('Error updating manager:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-      alert('Failed to update manager. Please check console for details.');
+    } catch (error) {
+      console.error('Error updating manager:', error);
     }
   };
 
