@@ -2,8 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import '../styles/ListInfluencers.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-
 interface SocialMediaAccount {
   username: string;
   platform: 'Instagram' | 'TikTok';
@@ -30,7 +28,7 @@ const ListInfluencers: React.FC = () => {
 
   const fetchInfluencers = useCallback(async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/influencers`, {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/influencers`, {
         params: {
           nameFilter,
           managerFilter
@@ -42,11 +40,11 @@ const ListInfluencers: React.FC = () => {
       console.error('Error fetching influencers:', error);
       setInfluencers([]); // Set empty array on error
     }
-  }, [nameFilter, managerFilter, BACKEND_URL]);
+  }, [nameFilter, managerFilter]);
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/influencers/employees`, {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/influencers/employees`, {
         timeout: 10000 // 10 second timeout
       });
       setEmployees(response.data);
@@ -58,7 +56,7 @@ const ListInfluencers: React.FC = () => {
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      const response = await axios.patch(`${BACKEND_URL}/api/influencers/${influencerId}/manager`, {
+      const response = await axios.patch(`${process.env.REACT_APP_BACKEND_URL}/api/influencers/${influencerId}/manager`, {
         managerId
       });
       setInfluencers(influencers.map(inf => 
