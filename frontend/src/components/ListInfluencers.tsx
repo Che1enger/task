@@ -93,30 +93,24 @@ const ListInfluencers: React.FC = () => {
 
   return (
     <div className="list-influencers">
-      <div className="filter-section">
+      <div className="filters">
         <div className="filter-group">
-          <label className="filter-label">
-            Filter by name:
-            <input
-              type="text"
-              value={nameFilter}
-              onChange={(e) => setNameFilter(e.target.value)}
-              className="filter-input"
-              placeholder="Search by name..."
-            />
-          </label>
+          <input
+            type="text"
+            placeholder="Search by first or last name..."
+            value={nameFilter}
+            onChange={(e) => setNameFilter(e.target.value)}
+            className="filter-input"
+          />
         </div>
         <div className="filter-group">
-          <label className="filter-label">
-            Filter by manager:
-            <input
-              type="text"
-              value={managerFilter}
-              onChange={(e) => setManagerFilter(e.target.value)}
-              className="filter-input"
-              placeholder="Search by manager..."
-            />
-          </label>
+          <input
+            type="text"
+            placeholder="Search by manager name or type 'none'..."
+            value={managerFilter}
+            onChange={(e) => setManagerFilter(e.target.value)}
+            className="filter-input"
+          />
         </div>
       </div>
 
