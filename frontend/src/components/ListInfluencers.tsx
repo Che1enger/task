@@ -29,18 +29,31 @@ const ListInfluencers: React.FC = () => {
   const [managerFilter, setManagerFilter] = useState('');
 
   const fetchInfluencers = useCallback(async () => {
-    const response = await axios.get(`${BACKEND_URL}/api/influencers`, {
-      params: {
-        nameFilter,
-        managerFilter
-      }
-    });
-    setInfluencers(response.data);
-  }, [nameFilter, managerFilter]);
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/influencers`, {
+        params: {
+          nameFilter,
+          managerFilter
+        },
+        timeout: 10000 // 10 second timeout
+      });
+      setInfluencers(response.data);
+    } catch (error) {
+      console.error('Error fetching influencers:', error);
+      setInfluencers([]); // Set empty array on error
+    }
+  }, [nameFilter, managerFilter, BACKEND_URL]);
 
   const fetchEmployees = async () => {
-    const response = await axios.get(`${BACKEND_URL}/api/influencers/employees`);
-    setEmployees(response.data);
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/influencers/employees`, {
+        timeout: 10000 // 10 second timeout
+      });
+      setEmployees(response.data);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      setEmployees([]); // Set empty array on error
+    }
   };
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
