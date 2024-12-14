@@ -13,7 +13,9 @@ const corsOptions = {
     : ['http://localhost:3000'],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Accept', 'Origin', 'X-Requested-With'],
-  credentials: true
+  credentials: true,
+  preflightContinue: true,
+  optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));

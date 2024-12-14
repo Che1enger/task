@@ -45,19 +45,20 @@ const ListInfluencers: React.FC = () => {
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
       const response = await axios({
-        method: 'patch',
+        method: 'PATCH',
         url: `${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`,
-        data: {
-          managerId
-        },
+        data: { managerId },
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         }
       });
-      setInfluencers(influencers.map(inf => 
-        inf._id === influencerId ? response.data : inf
-      ));
+      
+      if (response.data) {
+        setInfluencers(influencers.map(inf => 
+          inf._id === influencerId ? response.data : inf
+        ));
+      }
     } catch (error) {
       console.error('Error updating manager:', error);
     }
