@@ -12,9 +12,9 @@
 .form-input {
   width: 100%;
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  margin-top: 4px;
+  box-sizing: border-box;
 }
 
 .char-count {
@@ -26,6 +26,7 @@
 }
 
 .social-media-section {
+  border-radius: 4px;
   margin-top: 20px;
 }
 
