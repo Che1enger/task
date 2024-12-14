@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/ListInfluencers.css';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://backend-omega-opal-70.vercel.app';
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 interface SocialMediaAccount {
   username: string;
@@ -45,7 +45,7 @@ const ListInfluencers: React.FC = () => {
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      const url = `${API_BASE_URL}/api/influencers/${influencerId}/manager`;
+      const url = `http://backend-omega-opal-70.vercel.app/api/influencers/${influencerId}/manager`;
       console.log('Making request to:', url);
       
       const response = await axios({
