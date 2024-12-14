@@ -45,7 +45,7 @@ const ListInfluencers: React.FC = () => {
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      const url = `http://backend-omega-opal-70.vercel.app/api/influencers/${influencerId}/manager`;
+      const url = `${API_BASE_URL}/api/influencers/${influencerId}/manager`;
       console.log('Making request to:', url);
       
       const response = await axios({
