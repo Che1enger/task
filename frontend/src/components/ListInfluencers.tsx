@@ -2,8 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import '../styles/ListInfluencers.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
-
 interface SocialMediaAccount {
   username: string;
   platform: 'Instagram' | 'TikTok';
