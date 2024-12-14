@@ -3,6 +3,17 @@ import axios from 'axios';
 import '../styles/ListInfluencers.css';
 import { ENDPOINTS } from '../config.ts';
 
+// Configure axios defaults
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.withCredentials = true;
+
+const axiosInstance = axios.create({
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  withCredentials: true
+});
+
 interface SocialMediaAccount {
   username: string;
   platform: 'Instagram' | 'TikTok';
@@ -26,28 +37,57 @@ const ListInfluencers: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [nameFilter, setNameFilter] = useState('');
   const [managerFilter, setManagerFilter] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  console.log('API_URL:', process.env.REACT_APP_API_URL);
+  console.log('ENDPOINTS:', ENDPOINTS);
 
   const fetchInfluencers = async () => {
-    const response = await axios.get(ENDPOINTS.INFLUENCERS, {
-      params: {
-        nameFilter,
-        managerFilter
-      }
-    });
-    setInfluencers(response.data);
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await axios.get(ENDPOINTS.INFLUENCERS, {
+        params: {
+          nameFilter,
+          managerFilter
+        }
+      });
+      console.log('Fetched influencers:', response.data);
+      setInfluencers(response.data);
+    } catch (error: any) {
+      console.error('Error fetching influencers:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchEmployees = async () => {
-    const response = await axios.get(ENDPOINTS.EMPLOYEES);
-    setEmployees(response.data);
+    try {
+      const response = await axios.get(ENDPOINTS.EMPLOYEES);
+      console.log('Fetched employees:', response.data);
+      setEmployees(response.data);
+    } catch (error: any) {
+      console.error('Error fetching employees:', error);
+    }
   };
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      console.log('Updating manager:', { influencerId, managerId });
-      const response = await axios.patch(`${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`, {
-        managerId
+      setLoading(true);
+      setError(null);
+      console.log('Updating manager:', { 
+        influencerId, 
+        managerId,
+        url: `${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`
       });
+
+      const response = await axiosInstance.patch(
+        `${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`,
+        { managerId }
+      );
+
       console.log('Update response:', response.data);
       setInfluencers(influencers.map(inf => 
         inf._id === influencerId ? response.data : inf
@@ -56,9 +96,12 @@ const ListInfluencers: React.FC = () => {
       console.error('Error updating manager:', {
         message: error.message,
         response: error.response?.data,
-        status: error.response?.status
+        status: error.response?.status,
+        headers: error.response?.headers
       });
-      alert('Failed to update manager. Please check console for details.');
+      setError('Failed to update manager. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,6 +112,10 @@ const ListInfluencers: React.FC = () => {
   useEffect(() => {
     fetchEmployees();
   }, []);
+
+  if (error) {
+    return <div className="error-message">Error: {error}</div>;
+  }
 
   return (
     <div className="list-influencers">
@@ -95,42 +142,50 @@ const ListInfluencers: React.FC = () => {
         </div>
       </div>
       
-      <div className="influencers-list">
-        {influencers.length > 0 ? (
-          influencers.map((influencer) => (
-            <div key={influencer._id} className="influencer-card">
-              <h3>{influencer.firstName} {influencer.lastName}</h3>
-              <div className="social-accounts">
-                <strong>Social Media:</strong>
-                {influencer.socialMediaAccounts.map((acc, idx) => (
-                  <span key={idx} className="social-account">
-                    {acc.platform}: {acc.username}
-                  </span>
-                ))}
-              </div>
-              <div className="manager-section">
-                <strong>Manager:</strong>
-                <select
-                  value={influencer.manager?._id || ''}
-                  onChange={(e) => handleManagerChange(influencer._id, e.target.value || null)}
-                  className="manager-select"
-                >
-                  <option value="">No Manager</option>
-                  {employees.map((emp) => (
-                    <option key={emp._id} value={emp._id}>
-                      {emp.name}
-                    </option>
+      {loading ? (
+        <div className="loading">Loading...</div>
+      ) : (
+        <div className="influencers-list">
+          {influencers.length > 0 ? (
+            influencers.map((influencer) => (
+              <div key={influencer._id} className="influencer-card">
+                <h3>{influencer.firstName} {influencer.lastName}</h3>
+                <div className="social-accounts">
+                  <strong>Social Media:</strong>
+                  {influencer.socialMediaAccounts.map((acc, idx) => (
+                    <span key={idx} className="social-account">
+                      {acc.platform}: {acc.username}
+                    </span>
                   ))}
-                </select>
+                </div>
+                <div className="manager-section">
+                  <strong>Manager:</strong>
+                  <select
+                    value={influencer.manager?._id || ''}
+                    onChange={(e) => {
+                      console.log('Select changed:', e.target.value);
+                      handleManagerChange(influencer._id, e.target.value || null);
+                    }}
+                    className="manager-select"
+                    disabled={loading}
+                  >
+                    <option value="">No Manager</option>
+                    {employees.map((emp) => (
+                      <option key={emp._id} value={emp._id}>
+                        {emp.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="no-results">
+              No influencers found matching your search criteria
             </div>
-          ))
-        ) : (
-          <div className="no-results">
-            No influencers found matching your search criteria
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -77,6 +77,12 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Handle OPTIONS requests for PATCH
+router.options('/:id/manager', (req, res) => {
+  res.header('Access-Control-Allow-Methods', 'PATCH');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Origin, X-Requested-With');
+  res.status(200).send();
+});
 
 router.patch('/:id/manager', async (req, res) => {
   try {
@@ -106,6 +112,13 @@ router.patch('/:id/manager', async (req, res) => {
     
     const updatedInfluencer = await Influencer.findById(req.params.id).populate('manager');
     console.log('Updated influencer:', updatedInfluencer);
+    
+    // Set CORS headers explicitly for this response
+    res.header('Access-Control-Allow-Origin', 'https://frontend-five-theta-46.vercel.app');
+    res.header('Access-Control-Allow-Methods', 'PATCH');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Origin, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    
     res.send(updatedInfluencer);
   } catch (error) {
     console.error('Error updating manager:', error);
