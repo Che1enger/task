@@ -55,30 +55,31 @@ const ListInfluencers: React.FC = () => {
     }
   };
 
-  const renderManagerColumn = (influencer: Influencer) => {
+  const renderManagerSection = (influencer: Influencer) => {
     if (process.env.NODE_ENV === 'production') {
       return (
-        <td>
-          {influencer.manager ? influencer.manager.name : 'No manager'}
-        </td>
+        <div className="manager-section">
+          <strong>Manager:</strong> {influencer.manager ? influencer.manager.name : 'No Manager'}
+        </div>
       );
     }
 
     return (
-      <td>
+      <div className="manager-section">
+        <strong>Manager:</strong>
         <select
           value={influencer.manager?._id || ''}
           onChange={(e) => handleManagerChange(influencer._id, e.target.value || null)}
           className="manager-select"
         >
-          <option value="">No manager</option>
-          {employees.map((employee) => (
-            <option key={employee._id} value={employee._id}>
-              {employee.name}
+          <option value="">No Manager</option>
+          {employees.map((emp) => (
+            <option key={emp._id} value={emp._id}>
+              {emp.name}
             </option>
           ))}
         </select>
-      </td>
+      </div>
     );
   };
 
@@ -94,62 +95,53 @@ const ListInfluencers: React.FC = () => {
     <div className="list-influencers">
       <div className="filter-section">
         <div className="filter-group">
-          <label className="filter-label">Filter by Name:</label>
-          <input
-            type="text"
-            placeholder="Search by first or last name..."
-            value={nameFilter}
-            onChange={(e) => setNameFilter(e.target.value)}
-            className="filter-input"
-          />
+          <label className="filter-label">
+            Filter by name:
+            <input
+              type="text"
+              value={nameFilter}
+              onChange={(e) => setNameFilter(e.target.value)}
+              className="filter-input"
+              placeholder="Search by name..."
+            />
+          </label>
         </div>
         <div className="filter-group">
-          <label className="filter-label">Filter by Manager:</label>
-          <input
-            type="text"
-            placeholder="Search by manager name or type 'none'..."
-            value={managerFilter}
-            onChange={(e) => setManagerFilter(e.target.value)}
-            className="filter-input"
-          />
+          <label className="filter-label">
+            Filter by manager:
+            <input
+              type="text"
+              value={managerFilter}
+              onChange={(e) => setManagerFilter(e.target.value)}
+              className="filter-input"
+              placeholder="Search by manager..."
+            />
+          </label>
         </div>
       </div>
-      
-      <table>
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Manager</th>
-            <th>Social Media</th>
-          </tr>
-        </thead>
-        <tbody>
-          {influencers.length > 0 ? (
-            influencers.map((influencer) => (
-              <tr key={influencer._id}>
-                <td>{influencer.firstName}</td>
-                <td>{influencer.lastName}</td>
-                {renderManagerColumn(influencer)}
-                <td>
-                  <strong>Social Media:</strong>
-                  {influencer.socialMediaAccounts.map((acc, idx) => (
-                    <span key={idx} className="social-account">
-                      {acc.platform}: {acc.username}
-                    </span>
-                  ))}
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={4} className="no-results">
-                No influencers found matching your search criteria
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+
+      <div className="influencers-list">
+        {influencers.length > 0 ? (
+          influencers.map((influencer) => (
+            <div key={influencer._id} className="influencer-card">
+              <h3>{influencer.firstName} {influencer.lastName}</h3>
+              <div className="social-accounts">
+                <strong>Social Media:</strong>
+                {influencer.socialMediaAccounts.map((acc, idx) => (
+                  <span key={idx} className="social-account">
+                    {acc.platform}: {acc.username}
+                  </span>
+                ))}
+              </div>
+              {renderManagerSection(influencer)}
+            </div>
+          ))
+        ) : (
+          <div className="no-results">
+            No influencers found matching your search criteria
+          </div>
+        )}
+      </div>
     </div>
   );
 };
