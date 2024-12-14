@@ -8,9 +8,7 @@ const port = process.env.PORT || 5000;
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://frontend-five-theta-46.vercel.app'] 
-    : ['http://localhost:3000'],
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Accept', 'Origin', 'X-Requested-With'],
   credentials: true
@@ -43,7 +41,7 @@ app.options('*', cors(corsOptions));
 // Only start the server if not running on Vercel
 if (process.env.NODE_ENV !== 'production') {
   app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    console.log(`Server is running on port ${port}`);
   });
 }
 
