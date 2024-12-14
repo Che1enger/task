@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import '../styles/CreateInfluencer.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = `https://backend-omega-wine.vercel.app`;
 
 interface CreateInfluencerProps {
   onInfluencerCreated: () => void;
@@ -29,12 +29,14 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
       const uniqueAccounts = Array.from(new Set(socialMediaAccounts.map(acc => acc.username)))
         .map(username => socialMediaAccounts.find(acc => acc.username === username));
       
-      await axios.post(`${BACKEND_URL}/api/influencers`, { 
+      const response = await axios.post(`${BACKEND_URL}/api/influencers`, { 
         firstName, 
         lastName, 
         socialMediaAccounts: uniqueAccounts 
       });
 
+      console.log('Create response:', response.data);
+      
       setFirstName('');
       setLastName('');
       setSocialMediaAccounts([]);
@@ -43,8 +45,9 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
       setError('');
       
       onInfluencerCreated();
-    } catch (err) {
-      setError('Failed to create influencer. Please try again.');
+    } catch (error: any) {
+      console.error('Error creating influencer:', error.response?.data || error.message);
+      setError(error.response?.data?.message || 'Failed to create influencer');
     }
   };
 
