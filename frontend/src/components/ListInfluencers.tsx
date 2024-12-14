@@ -44,8 +44,16 @@ const ListInfluencers: React.FC = () => {
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      const response = await axios.patch(`${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`, {
-        managerId
+      const response = await axios({
+        method: 'patch',
+        url: `${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`,
+        data: {
+          managerId
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
       });
       setInfluencers(influencers.map(inf => 
         inf._id === influencerId ? response.data : inf
