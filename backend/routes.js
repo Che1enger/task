@@ -73,23 +73,26 @@ router.get('/', async (req, res) => {
 
 router.patch('/:id/manager', async (req, res) => {
   try {
-    console.log('Updating manager:', { params: req.params, body: req.body });
-    const { managerId } = req.body;
+    console.log('Received PATCH request:', { 
+      id: req.params.id, 
+      body: req.body,
+      headers: req.headers 
+    });
     
+    const { managerId } = req.body;
     const influencer = await Influencer.findById(req.params.id);
+    
     if (!influencer) {
       console.log('Influencer not found:', req.params.id);
-      return res.status(404).send({ error: 'Influencer not found' });
+      return res.status(404).json({ error: 'Influencer not found' });
     }
 
-    // Handle different cases for managerId
     if (managerId === null || managerId === '' || managerId === undefined) {
       influencer.manager = null;
     } else {
-      // Verify that the manager exists if managerId is provided
       const manager = await Employee.findById(managerId);
       if (!manager) {
-        return res.status(400).send({ error: 'Manager not found' });
+        return res.status(400).json({ error: 'Manager not found' });
       }
       influencer.manager = managerId;
     }
@@ -99,10 +102,11 @@ router.patch('/:id/manager', async (req, res) => {
     
     const updatedInfluencer = await Influencer.findById(req.params.id).populate('manager');
     console.log('Updated influencer:', updatedInfluencer);
-    res.send(updatedInfluencer);
+    
+    res.json(updatedInfluencer);
   } catch (error) {
     console.error('Error updating manager:', error);
-    res.status(400).send({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
