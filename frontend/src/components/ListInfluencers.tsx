@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/ListInfluencers.css';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
 interface SocialMediaAccount {
   username: string;
   platform: 'Instagram' | 'TikTok';
@@ -27,7 +29,7 @@ const ListInfluencers: React.FC = () => {
   const [managerFilter, setManagerFilter] = useState('');
 
   const fetchInfluencers = async () => {
-    const response = await axios.get('http://localhost:5000/api/influencers', {
+    const response = await axios.get(`${BACKEND_URL}/api/influencers`, {
       params: {
         nameFilter,
         managerFilter
@@ -37,13 +39,13 @@ const ListInfluencers: React.FC = () => {
   };
 
   const fetchEmployees = async () => {
-    const response = await axios.get('http://localhost:5000/api/influencers/employees');
+    const response = await axios.get(`${BACKEND_URL}/api/influencers/employees`);
     setEmployees(response.data);
   };
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/influencers/${influencerId}/manager`, {
+      const response = await axios.patch(`${BACKEND_URL}/api/influencers/${influencerId}/manager`, {
         managerId
       });
       setInfluencers(influencers.map(inf => 
