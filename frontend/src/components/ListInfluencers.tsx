@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/ListInfluencers.css';
-import { ENDPOINTS } from '../config';
+import { ENDPOINTS } from '../config.ts';
 
 interface SocialMediaAccount {
   username: string;

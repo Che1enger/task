@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../styles/CreateInfluencer.css';
-import { ENDPOINTS } from '../config';
+import { ENDPOINTS } from '../config.ts';
 
 interface CreateInfluencerProps {
   onInfluencerCreated: () => void;
