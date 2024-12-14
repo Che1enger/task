@@ -55,34 +55,6 @@ const ListInfluencers: React.FC = () => {
     }
   };
 
-  const renderManagerSection = (influencer: Influencer) => {
-    if (process.env.NODE_ENV === 'production') {
-      return (
-        <div className="manager-section">
-          <strong>Manager:</strong> {influencer.manager ? influencer.manager.name : 'No Manager'}
-        </div>
-      );
-    }
-
-    return (
-      <div className="manager-section">
-        <strong>Manager:</strong>
-        <select
-          value={influencer.manager?._id || ''}
-          onChange={(e) => handleManagerChange(influencer._id, e.target.value || null)}
-          className="manager-select"
-        >
-          <option value="">No Manager</option>
-          {employees.map((emp) => (
-            <option key={emp._id} value={emp._id}>
-              {emp.name}
-            </option>
-          ))}
-        </select>
-      </div>
-    );
-  };
-
   useEffect(() => {
     fetchInfluencers();
   }, [nameFilter, managerFilter]);
@@ -129,7 +101,21 @@ const ListInfluencers: React.FC = () => {
                   </span>
                 ))}
               </div>
-              {renderManagerSection(influencer)}
+              <div className="manager-section">
+                <strong>Manager:</strong>
+                <select
+                  value={influencer.manager?._id || ''}
+                  onChange={(e) => handleManagerChange(influencer._id, e.target.value || null)}
+                  className="manager-select"
+                >
+                  <option value="">No Manager</option>
+                  {employees.map((emp) => (
+                    <option key={emp._id} value={emp._id}>
+                      {emp.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           ))
         ) : (
