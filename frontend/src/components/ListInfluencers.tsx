@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import '../styles/ListInfluencers.css';
 
@@ -28,7 +28,7 @@ const ListInfluencers: React.FC = () => {
   const [nameFilter, setNameFilter] = useState('');
   const [managerFilter, setManagerFilter] = useState('');
 
-  const fetchInfluencers = async () => {
+  const fetchInfluencers = useCallback(async () => {
     const response = await axios.get(`${BACKEND_URL}/api/influencers`, {
       params: {
         nameFilter,
@@ -36,7 +36,7 @@ const ListInfluencers: React.FC = () => {
       }
     });
     setInfluencers(response.data);
-  };
+  }, [nameFilter, managerFilter]);
 
   const fetchEmployees = async () => {
     const response = await axios.get(`${BACKEND_URL}/api/influencers/employees`);
@@ -58,7 +58,7 @@ const ListInfluencers: React.FC = () => {
 
   useEffect(() => {
     fetchInfluencers();
-  }, [nameFilter, managerFilter]);
+  }, [nameFilter, managerFilter, fetchInfluencers]);
 
   useEffect(() => {
     fetchEmployees();
