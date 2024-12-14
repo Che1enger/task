@@ -1,4 +1,3 @@
-
 const express = require('express');
 const { Influencer, Employee } = require('./models');
 const router = express.Router();
@@ -81,19 +80,36 @@ router.get('/', async (req, res) => {
 
 router.patch('/:id/manager', async (req, res) => {
   try {
+    console.log('Updating manager:', { params: req.params, body: req.body });
     const { managerId } = req.body;
+    
     const influencer = await Influencer.findById(req.params.id);
     if (!influencer) {
+      console.log('Influencer not found:', req.params.id);
       return res.status(404).send({ error: 'Influencer not found' });
     }
+
+    // Handle different cases for managerId
+    if (managerId === null || managerId === '' || managerId === undefined) {
+      influencer.manager = null;
+    } else {
+      // Verify that the manager exists if managerId is provided
+      const manager = await Employee.findById(managerId);
+      if (!manager) {
+        return res.status(400).send({ error: 'Manager not found' });
+      }
+      influencer.manager = managerId;
+    }
     
-    influencer.manager = managerId || null;
+    console.log('Saving influencer with manager:', influencer.manager);
     await influencer.save();
     
     const updatedInfluencer = await Influencer.findById(req.params.id).populate('manager');
+    console.log('Updated influencer:', updatedInfluencer);
     res.send(updatedInfluencer);
   } catch (error) {
-    res.status(400).send(error);
+    console.error('Error updating manager:', error);
+    res.status(400).send({ error: error.message });
   }
 });
 
