@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/ListInfluencers.css';
-
-const BACKEND_URL = 'http://localhost:5000';
+import { ENDPOINTS } from '../config';
 
 interface SocialMediaAccount {
   username: string;
@@ -29,7 +28,7 @@ const ListInfluencers: React.FC = () => {
   const [managerFilter, setManagerFilter] = useState('');
 
   const fetchInfluencers = async () => {
-    const response = await axios.get(`${BACKEND_URL}/api/influencers`, {
+    const response = await axios.get(ENDPOINTS.INFLUENCERS, {
       params: {
         nameFilter,
         managerFilter
@@ -39,13 +38,13 @@ const ListInfluencers: React.FC = () => {
   };
 
   const fetchEmployees = async () => {
-    const response = await axios.get(`${BACKEND_URL}/api/influencers/employees`);
+    const response = await axios.get(ENDPOINTS.EMPLOYEES);
     setEmployees(response.data);
   };
 
   const handleManagerChange = async (influencerId: string, managerId: string | null) => {
     try {
-      const response = await axios.patch(`${BACKEND_URL}/api/influencers/${influencerId}/manager`, {
+      const response = await axios.patch(`${ENDPOINTS.INFLUENCERS}/${influencerId}/manager`, {
         managerId
       });
       setInfluencers(influencers.map(inf => 

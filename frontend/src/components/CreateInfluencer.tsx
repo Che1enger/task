@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../styles/CreateInfluencer.css';
-
-const BASE_URL = 'https://backend-omega-wine.vercel.app';
+import { ENDPOINTS } from '../config';
 
 interface CreateInfluencerProps {
   onInfluencerCreated: () => void;
@@ -15,62 +14,51 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
   const [username, setUsername] = useState('');
   const [platform, setPlatform] = useState('Instagram');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+
+    if (firstName.length > 50 || lastName.length > 50) {
+      setError('First name and last name must be 50 characters or less');
+      return;
+    }
 
     try {
-      if (!firstName.trim() || !lastName.trim()) {
-        throw new Error('First name and last name are required');
-      }
-
       const uniqueAccounts = Array.from(new Set(socialMediaAccounts.map(acc => acc.username)))
         .map(username => socialMediaAccounts.find(acc => acc.username === username));
       
-      const response = await axios.post(`${BASE_URL}/api/influencers`, { 
-        firstName: firstName.trim(), 
-        lastName: lastName.trim(), 
+      await axios.post(ENDPOINTS.INFLUENCERS, { 
+        firstName, 
+        lastName, 
         socialMediaAccounts: uniqueAccounts 
-      }, {
-        timeout: 30000 // Increase timeout to 30 seconds
       });
 
-      console.log('Create response:', response.data);
       setFirstName('');
       setLastName('');
       setSocialMediaAccounts([]);
       setUsername('');
       setPlatform('Instagram');
       setError('');
+      
       onInfluencerCreated();
-    } catch (err: any) {
-      console.error('Error creating influencer:', err);
-      setError(err.response?.data?.message || err.message || 'Failed to create influencer');
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      setError('Failed to create influencer. Please try again.');
     }
   };
 
-  const addSocialMediaAccount = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username.trim()) {
-      setError('Username is required');
-      return;
-    }
-    
-    const isDuplicate = socialMediaAccounts.some(
-      acc => acc.username.toLowerCase() === username.toLowerCase() && acc.platform === platform
-    );
-
-    if (isDuplicate) {
-      setError('This social media account already exists');
+  const addSocialMediaAccount = () => {
+    if (!username) {
+      setError('Please enter a username');
       return;
     }
 
-    setSocialMediaAccounts([...socialMediaAccounts, { username: username.trim(), platform }]);
+    if (socialMediaAccounts.some(acc => acc.username === username)) {
+      setError('This account has already been added');
+      return;
+    }
+
+    setSocialMediaAccounts([...socialMediaAccounts, { username, platform }]);
     setUsername('');
     setError('');
   };
@@ -154,8 +142,8 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
           </div>
         </div>
 
-        <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? 'Creating...' : 'Create Influencer'}
+        <button type="submit" className="submit-button">
+          Create Influencer
         </button>
       </form>
     </div>
