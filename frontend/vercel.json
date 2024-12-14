@@ -33,6 +33,6 @@
   "outputDirectory": "build",
   "framework": "create-react-app",
   "env": {
-    "VITE_BACKEND_URL": "@backend_url"
+    "REACT_APP_API_URL": "https://backend-influencer-management.vercel.app"
   }
 }
