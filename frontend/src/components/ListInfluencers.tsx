@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/ListInfluencers.css';
 
-const API_BASE_URL = 'backend-omega-opal-70.vercel.app';
+const API_BASE_URL = 'https://backend-omega-opal-70.vercel.app';
 
 interface SocialMediaAccount {
   username: string;
