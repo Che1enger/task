@@ -25,8 +25,9 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
     }
 
     try {
-      const uniqueAccounts = Array.from(new Set(socialMediaAccounts.map(acc => acc.username)))
-        .map(username => socialMediaAccounts.find(acc => acc.username === username));
+      const uniqueAccounts = socialMediaAccounts.filter((acc, index, self) => 
+        index === self.findIndex((t) => (t.username === acc.username && t.platform === acc.platform))
+      );
       
       await axios.post(ENDPOINTS.INFLUENCERS, { 
         firstName, 
@@ -53,7 +54,7 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
       return;
     }
 
-    if (socialMediaAccounts.some(acc => acc.username === username)) {
+    if (socialMediaAccounts.some(acc => acc.username === username && acc.platform === platform)) {
       setError('This account has already been added');
       return;
     }
@@ -63,8 +64,8 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
     setError('');
   };
 
-  const removeSocialMediaAccount = (username: string) => {
-    setSocialMediaAccounts(socialMediaAccounts.filter(acc => acc.username !== username));
+  const removeSocialMediaAccount = (username: string, platform: string) => {
+    setSocialMediaAccounts(socialMediaAccounts.filter(acc => acc.username !== username || acc.platform !== platform));
   };
 
   return (
@@ -132,7 +133,7 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
                 <span>{account.platform}: {account.username}</span>
                 <button
                   type="button"
-                  onClick={() => removeSocialMediaAccount(account.username)}
+                  onClick={() => removeSocialMediaAccount(account.username, account.platform)}
                   className="remove-button"
                 >
                   ×
