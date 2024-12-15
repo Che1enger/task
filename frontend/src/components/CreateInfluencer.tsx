@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/CreateInfluencer.css';
 import { ENDPOINTS } from '../config.ts';
 
 interface CreateInfluencerProps {
   onInfluencerCreated: () => void;
+}
+
+interface Employee {
+  _id: string;
+  name: string;
 }
 
 const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated }) => {
@@ -14,6 +19,21 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
   const [username, setUsername] = useState('');
   const [platform, setPlatform] = useState('Instagram');
   const [error, setError] = useState('');
+  const [managers, setManagers] = useState<Employee[]>([]);
+  const [selectedManager, setSelectedManager] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchManagers = async () => {
+      try {
+        const response = await axios.get(ENDPOINTS.EMPLOYEES);
+        setManagers(response.data);
+      } catch (error) {
+        console.error('Error fetching managers:', error);
+      }
+    };
+
+    fetchManagers();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +52,8 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
       await axios.post(ENDPOINTS.INFLUENCERS, { 
         firstName, 
         lastName, 
-        socialMediaAccounts: uniqueAccounts 
+        socialMediaAccounts: uniqueAccounts,
+        manager: selectedManager
       });
 
       setFirstName('');
@@ -41,6 +62,7 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
       setUsername('');
       setPlatform('Instagram');
       setError('');
+      setSelectedManager(null);
       
       onInfluencerCreated();
     } catch (err) {
@@ -96,6 +118,16 @@ const CreateInfluencer: React.FC<CreateInfluencerProps> = ({ onInfluencerCreated
             className="form-input"
           />
           <span className="char-count">{lastName.length}/50</span>
+        </div>
+
+        <div className="form-group">
+          <label>Manager:</label>
+          <select value={selectedManager || ''} onChange={(e) => setSelectedManager(e.target.value)}>
+            <option value="">Select Manager</option>
+            {managers.map(manager => (
+              <option key={manager._id} value={manager._id}>{manager.name}</option>
+            ))}
+          </select>
         </div>
 
         <div className="social-media-section">
