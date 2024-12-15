@@ -87,6 +87,10 @@ const ListInfluencers: React.FC = () => {
           axios.get(`${API_BASE_URL}/api/influencers/employees`)
         ]);
         
+        console.log('Influencers Response:', influencersRes);  // Log the full response
+
+        console.log('Influencers Response Data:', influencersRes.data);  // Log the response data
+
         setInfluencers(influencersRes.data);
         setEmployees(employeesRes.data);
       } catch (error) {
