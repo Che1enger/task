@@ -91,8 +91,19 @@ const ListInfluencers: React.FC = () => {
 
         console.log('Influencers Response Data:', influencersRes.data);  // Log the response data
 
-        setInfluencers(influencersRes.data);
-        setEmployees(employeesRes.data);
+        if (Array.isArray(influencersRes.data)) {
+          setInfluencers(influencersRes.data);
+        } else {
+          console.error('Expected an array but got:', influencersRes.data);
+          setInfluencers([]); // Set to an empty array or handle accordingly
+        }
+
+        if (Array.isArray(employeesRes.data)) {
+          setEmployees(employeesRes.data);
+        } else {
+          console.error('Expected an array but got:', employeesRes.data);
+          setEmployees([]); // Set to an empty array or handle accordingly
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
