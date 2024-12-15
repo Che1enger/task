@@ -1,4 +1,3 @@
-// backend/models.js
 const mongoose = require('mongoose');
 
 const socialMediaAccountSchema = new mongoose.Schema({

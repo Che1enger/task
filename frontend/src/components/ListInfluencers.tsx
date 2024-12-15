@@ -87,22 +87,22 @@ const ListInfluencers: React.FC = () => {
           axios.get(`${API_BASE_URL}/api/influencers/employees`)
         ]);
         
-        console.log('Influencers Response:', influencersRes);  // Log the full response
+        console.log('Influencers Response:', influencersRes); 
 
-        console.log('Influencers Response Data:', influencersRes.data);  // Log the response data
+        console.log('Influencers Response Data:', influencersRes.data);  
 
         if (Array.isArray(influencersRes.data)) {
           setInfluencers(influencersRes.data);
         } else {
           console.error('Expected an array but got:', influencersRes.data);
-          setInfluencers([]); // Set to an empty array or handle accordingly
+          setInfluencers([]);
         }
 
         if (Array.isArray(employeesRes.data)) {
           setEmployees(employeesRes.data);
         } else {
           console.error('Expected an array but got:', employeesRes.data);
-          setEmployees([]); // Set to an empty array or handle accordingly
+          setEmployees([]);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
