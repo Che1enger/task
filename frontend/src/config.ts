@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const API_URL = 'https://backend-omega-opal-70.vercel.app';
 
 export const ENDPOINTS = {
   INFLUENCERS: `${API_URL}/api/influencers`,
